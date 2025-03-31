@@ -2,9 +2,6 @@
 
 use App\InternalAPI\V1\Books\Integrations\NYTClient;
 use App\InternalAPI\V1\Books\Services\BestSellerService;
-use Tests\TestCase;
-
-uses(TestCase::class)->in(__DIR__);
 
 beforeEach(function () {
     config([
