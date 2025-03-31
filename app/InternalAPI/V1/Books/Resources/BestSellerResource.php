@@ -4,7 +4,7 @@ namespace App\InternalAPI\V1\Books\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BookResource extends JsonResource
+class BestSellerResource extends JsonResource
 {
     public function toArray($request): array
     {

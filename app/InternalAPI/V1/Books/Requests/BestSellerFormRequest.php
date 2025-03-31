@@ -38,7 +38,7 @@ class BestSellerFormRequest extends FormRequest
                 'integer',
                 function ($attribute, $value, $fail): void {
                     if ($value % 20 !== 0) {
-                        $fail("The {$attribute} must be a multiple of 20.");
+                        $fail(__("The {$attribute} must be a multiple of 20."));
                     }
                 }
             ],
@@ -48,7 +48,7 @@ class BestSellerFormRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'isbn.regex' => 'The ISBN must be a 10 or 13 digit number. For multiple ISBNs, separate them with semicolons.',
+            'isbn.regex' => __('The ISBN must be a 10 or 13 digit number. For multiple ISBNs, separate them with semicolons.'),
         ];
     }
 }

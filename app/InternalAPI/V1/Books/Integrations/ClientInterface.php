@@ -9,4 +9,6 @@ interface ClientInterface
     public function validateCredentials(): void;
 
     public function getData(array $query): array;
+
+    public function makeHttpRequest(): array;
 }

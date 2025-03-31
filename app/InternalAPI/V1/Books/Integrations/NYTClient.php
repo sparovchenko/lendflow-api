@@ -22,8 +22,8 @@ class NYTClient implements ClientInterface
 
     public function validateCredentials(): void
     {
-        throw_if(!$this->apiKey, 'Please specify NYT API key');
-        throw_if(!$this->baseUrl, 'Please specify NYT base URL');
+        throw_if(!$this->apiKey, __('Please specify NYT API key'));
+        throw_if(!$this->baseUrl, __('Please specify NYT base URL'));
     }
 
     public function getData(array $query): array
@@ -34,20 +34,22 @@ class NYTClient implements ClientInterface
 
             $this->handleQueryParams($query);
 
-            return $this->makeHttpRequest();
+            $response = $this->makeHttpRequest();
+
+            return $response;
         } catch (Throwable $e) {
             return ['error' => $e->getMessage()];
         }
     }
 
-    protected function makeHttpRequest(): array
+    public function makeHttpRequest(): array
     {
         $cacheKey = 'nyt_api_' . md5(json_encode($this->params));
 
         return Cache::remember($cacheKey, 3600, function () {
             $response = Http::get($this->baseUrl, $this->params);
 
-            throw_if($response->failed(), 'NYT API request failed');
+            throw_if($response->failed(), __('NYT API request failed'));
 
             return $response['results'];
         });
