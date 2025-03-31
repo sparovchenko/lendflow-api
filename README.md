@@ -24,43 +24,41 @@ This Laravel-based API acts as a wrapper for the New York Times Best Sellers His
 
 1. **Clone the Repository**
 
-   ```bash
+```bash
    git clone https://github.com/yourusername/lendflow-api.git
    cd lendflow-api
-   ```
+```
 
 2. **Install Dependencies**
 
-    ```bash
+```bash
     composer install
-    ```
+```
 
-3. **Copy .env File**
+3. **Copy the example environment file and set your local environment variables:**
 
-    *Copy the example environment file and set your local environment variables:*
-
-    ```bash
+```bash
     cp .env.example .env
-    ```
+```
 
 4. **Generate Application Key**
 
-    ```bash
+```bash
     php artisan key:generate
-    ```
+```
 
 ## Configuration
 
 *In your .env file, add your New York Times API credentials and base URL:*
 
-    ```bash
+```bash
     LENDFLOW_NYT_API_KEY=
     LENDFLOW_NYT_BASE_URL_FOR_BOOKS=
-    ```
+```
 
 ## Project Structure
 
-    ```bash
+```bash
     app/
     └── InternalAPI/
         └── V1/
@@ -84,14 +82,14 @@ This Laravel-based API acts as a wrapper for the New York Times Best Sellers His
     tests/
     └── Feature/
         └── ExampleTest.php  // Pest tests for the API
-    ```
+```
 
 ## Running the Application
 
 *To start the Laravel development server, run:*
 
 ```bash
-php artisan serve
+    php artisan serve
 ```
 
 ## Testing
@@ -101,38 +99,38 @@ php artisan serve
 1. Run All Tests
 
 ```bash
-./vendor/bin/pest
+    ./vendor/bin/pest
 ```
 
 2. Key Testing Features:
 
-    HTTP Client Faking:
-    * Tests use Laravel's Http::fake() and Http::preventStrayRequests() to simulate API responses without making real HTTP requests.
+    * HTTP Client Faking:
+        Tests use Laravel's Http::fake() and Http::preventStrayRequests() to simulate API responses without making real HTTP requests.
 
-    Mocking with Mockery:
-    * Tests also include examples of using Mockery to substitute the NYTClient in the service layer.
+    * Mocking with Mockery:
+        Tests also include examples of using Mockery to substitute the NYTClient in the service layer.
 
-    Validation and Edge Cases:
-    * Tests cover validation errors, edge cases, and proper error handling when the NYT API fails.
+    * Validation and Edge Cases:
+        Tests cover validation errors, edge cases, and proper error handling when the NYT API fails.
 
 ## To be Enhanced
 
-    * CI/CD:
-        It is recommended to integrate CI/CD to run tests automatically on each commit.
+* CI/CD:
+    It is recommended to integrate CI/CD to run tests automatically on each commit.
 
-    * User Authentication & Authorization:
-        It would be great to integrate user authentication and authorization to secure the API. This enhancement would:
-            * Ensure only authorized users can trigger the endpoint.
-            * Allow for more granular control over access to different parts of the API.
-            * Include additional request validations based on the authenticated user's permissions.
+* User Authentication & Authorization:
+    It would be great to integrate user authentication and authorization to secure the API. This enhancement would:
+        * Ensure only authorized users can trigger the endpoint.
+        * Allow for more granular control over access to different parts of the API.
+        * Include additional request validations based on the authenticated user's permissions.
 
 ## Additional Notes
 
-    * Rate Limiting:
-        Rate limiting is applied to protect the API. Check RouteServiceProvider or middleware configurations for details.
+* Rate Limiting:
+    Rate limiting is applied to protect the API. Check RouteServiceProvider or middleware configurations for details.
 
-    * Caching:
-        API responses are cached for one hour to improve performance and reduce external API calls.
+* Caching:
+    API responses are cached for one hour to improve performance and reduce external API calls.
 
-    * Code Standards:
-        This project follows OOP, SOLID, DRY, KISS, and YAGNI principles, as well as PSR standards. Contributions should adhere to these guidelines.
+* Code Standards:
+    This project follows OOP, SOLID, DRY, KISS, and YAGNI principles, as well as PSR standards. Contributions should adhere to these guidelines.
