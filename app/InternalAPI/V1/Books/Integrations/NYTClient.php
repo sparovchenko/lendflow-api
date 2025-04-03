@@ -2,9 +2,9 @@
 
 namespace App\InternalAPI\V1\Books\Integrations;
 
+use App\InternalAPI\V1\Books\Exceptions\NYTApiException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Throwable;
 
 class NYTClient implements ClientInterface
 {
@@ -22,36 +22,40 @@ class NYTClient implements ClientInterface
 
     public function validateCredentials(): void
     {
-        throw_if(!$this->apiKey, __('Please specify NYT API key'));
-        throw_if(!$this->baseUrl, __('Please specify NYT base URL'));
+        throw_if(
+            ! $this->apiKey,
+            new NYTApiException(__('Please specify NYT API key')),
+        );
+        throw_if(
+            ! $this->baseUrl,
+            new NYTApiException(__('Please specify NYT base URL')),
+        );
     }
 
     public function getData(array $query): array
     {
-        try {
-            $this->setupCredentials();
-            $this->validateCredentials();
+        $this->setupCredentials();
+        $this->validateCredentials();
+        $this->handleQueryParams($query);
 
-            $this->handleQueryParams($query);
+        $response = $this->makeHttpRequest();
 
-            $response = $this->makeHttpRequest();
+        throw_if(
+            empty($response),
+            new NYTApiException(__('Failed to fetch NYT data')),
+        );
 
-            return $response;
-        } catch (Throwable $e) {
-            return ['error' => $e->getMessage()];
-        }
+        return $response;
     }
 
     public function makeHttpRequest(): array
     {
-        $cacheKey = 'nyt_api_' . md5(json_encode($this->params));
+        $cacheKey = 'nyt_api_'.md5(json_encode($this->params));
 
         return Cache::remember($cacheKey, 3600, function () {
             $response = Http::get($this->baseUrl, $this->params);
 
-            throw_if($response->failed(), __('NYT API request failed'));
-
-            return $response['results'];
+            return $response->failed() ? [] : $response['results'];
         });
     }
 
@@ -59,15 +63,15 @@ class NYTClient implements ClientInterface
     {
         $this->params['api-key'] = $this->apiKey;
 
-        if (!empty($query['author'])) {
+        if (! empty($query['author'])) {
             $this->params['author'] = $query['author'];
         }
 
-        if (!empty($query['title'])) {
+        if (! empty($query['title'])) {
             $this->params['title'] = $query['title'];
         }
 
-        if (!empty($query['isbn']) && is_array($query['isbn'])) {
+        if (! empty($query['isbn']) && is_array($query['isbn'])) {
             $this->params['isbn'] = implode(',', $query['isbn']);
         }
 

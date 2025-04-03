@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\InternalAPI\V1\Books\Actions\BestSellerAction;
+use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
     ->name('v1')

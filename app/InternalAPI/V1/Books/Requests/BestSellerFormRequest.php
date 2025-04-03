@@ -31,7 +31,7 @@ class BestSellerFormRequest extends FormRequest
                 //  (\d{10}|\d{13})       One ISBN: either 10 or 13 digits.
                 //  (;(\\d{10}|\\d{13}))* Optionally, additional ISBNs preceded by semicolons.
                 //  $                     End of string.
-                'regex:/^(\d{10}|\d{13})(;(\d{10}|\d{13}))*$/'
+                'regex:/^(\d{10}|\d{13})(;(\d{10}|\d{13}))*$/',
             ],
             'offset' => [
                 'sometimes',
@@ -40,11 +40,12 @@ class BestSellerFormRequest extends FormRequest
                     if ($value % 20 !== 0) {
                         $fail(__("The {$attribute} must be a multiple of 20."));
                     }
-                }
+                },
             ],
             'title' => 'sometimes|string|max:255',
         ];
     }
+
     public function messages(): array
     {
         return [

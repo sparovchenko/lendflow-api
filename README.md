@@ -4,133 +4,157 @@ This Laravel-based API acts as a wrapper for the New York Times Best Sellers His
 
 ## Table of Contents
 
-- [Requirements](#requirements)
-- [Installation](#installation)
-- [Configuration](#configuration)
 - [Project Structure](#project-structure)
-- [Running the Application](#running-the-application)
+- [Clone the Repository](#clone-the-repository)
+- [Setting Up the Development Environment](#setting-up-the-development-environment)
+- [Static Analysis & Code Formatting](#static-analysis--code-formatting)
 - [Testing](#testing)
 - [To be Enhanced](#to-be-enhanced)
 - [Additional Notes](#additional-notes)
 
-## Requirements
-
-- PHP 8.0 or above
-- Composer
-- A web server (e.g., Apache, Nginx) or PHP's built-in server
-- Laravel 9 (or your project version)
-
-## Installation
-
-1. **Clone the Repository**
-
-```bash
-   git clone https://github.com/yourusername/lendflow-api.git
-   cd lendflow-api
-```
-
-2. **Install Dependencies**
-
-```bash
-    composer install
-```
-
-3. **Copy the example environment file and set your local environment variables:**
-
-```bash
-    cp .env.example .env
-```
-
-4. **Generate Application Key**
-
-```bash
-    php artisan key:generate
-```
-
-## Configuration
-
-*In your .env file, add your New York Times API credentials and base URL:*
-
-```bash
-    LENDFLOW_NYT_API_KEY=
-    LENDFLOW_NYT_BASE_URL_FOR_BOOKS=
-```
-
 ## Project Structure
 
 ```bash
-    app/
-    └── InternalAPI/
-        └── V1/
-            └── Books/
-                ├── Actions/
-                │    └── BestSellerAction.php
-                ├── Integrations/
-                │    ├── ClientInterface.php
-                │    └── NYTClient.php
-                ├── Requests/
-                │    └── BestSellerFormRequest.php
-                ├── Resources/
-                │    └── BestSellerResource.php
-                └── Servises/
-                    └── BestSellerService.php
-    config/
-    └── services.php
-    routes/
-    ├── api.php
-    └── web.php
-    tests/
-    └── Feature/
-        └── ExampleTest.php  // Pest tests for the API
+lendflow-api/
+    ├── app/
+    │   ├── InternalAPI/
+    │   │   └── Actions
+    │   │   │   └── BestSellerAction.php
+    │   │   └── Exceptions
+    │   │   │   └── NYTApiException.php
+    │   │   └── Integrations
+    │   │   │   ├── ClientInterface.php
+    │   │   │   └── NYTClient.php
+    │   │   └── Requests
+    │   │   │   └── BestSellerFormRequest.php
+    │   │   └── Resources
+    │   │   │   └── BestSellerResource.php
+    │   │   └── Services
+    │   │   │   └── BestSellerService.php
+    │   └── Providers/
+    │   │   └── AppServiceProvider.php
+    ├── bootstrap/
+    ├── config/
+    ├── database/
+    ├── docker/
+    │   ├── common/
+    │   │   └── php-fpm/
+    │   │       └── Dockerfile
+    │   ├── development/
+    │   │   ├── php-fpm/
+    │   │   │   └── entrypoint.sh
+    │   │   ├── workspace/
+    │   │   │   └── Dockerfile
+    │   │   └── nginx
+    │   │       ├── Dockerfile
+    │   │       └── nginx.conf
+    │   └── production/
+    ├── public/
+    ├── resources/
+    ├── routes/
+    ├── storage/
+    ├── tests/
+    ├── vendor/
+    ├── .env
+    ├── .env.example
+    ├── .gitattributes
+    ├── .gitignore
+    ├── artisan
+    ├── compose.dev.yaml
+    ├── composer.json
+    ├── composer.lock
+    ├── package.json
+    ├── phpstan.neon
+    ├── phpunit.xml
+    ├── phpunipint.json
+    ├── README.md
+    ├── vite.config.js
 ```
 
-## Running the Application
-
-*To start the Laravel development server, run:*
+## Clone the Repository
 
 ```bash
-    php artisan serve
+git clone https://github.com/yourusername/lendflow-api.git
+cd lendflow-api
+```
+
+## Setting Up the Development Environment
+
+1. Copy the .env.example file to .env and set NYT API Credentials:
+
+```bash
+cp .env.example .env
+
+LENDFLOW_NYT_API_KEY=
+LENDFLOW_NYT_BASE_URL_FOR_BOOKS=
+```
+
+2. Start the Docker Compose Services:
+
+```bash
+docker-compose -f compose.dev.yaml up -d
+```
+
+3. Generate APP KEY:
+
+```bash
+docker-compose -f compose.dev.yaml exec workspace php artisan key:generate
+```
+
+4. Install Laravel Dependencies:
+
+```bash
+docker-compose -f compose.dev.yaml exec workspace composer install
+```
+
+5. Access the Application:
+
+Open your browser and navigate to [http://localhost:8080](http://localhost:8080).
+
+## Static Analysis & Code Formatting
+
+*Laravel Pint (Code Style)*
+
+```bash
+docker-compose -f compose.dev.yaml exec workspace composer format
+```
+
+*PHPStan / Larastan (Static Analysis)*
+
+```bash
+docker-compose -f compose.dev.yaml exec workspace composer analyze
 ```
 
 ## Testing
 
-*This project uses Pest for testing along with Laravel's testing helpers.*
-
-1. Run All Tests
-
 ```bash
-    ./vendor/bin/pest
+docker-compose -f compose.dev.yaml exec workspace php artisan test
 ```
-
-2. Key Testing Features:
-
-    * HTTP Client Faking:
-        Tests use Laravel's Http::fake() and Http::preventStrayRequests() to simulate API responses without making real HTTP requests.
-
-    * Mocking with Mockery:
-        Tests also include examples of using Mockery to substitute the NYTClient in the service layer.
-
-    * Validation and Edge Cases:
-        Tests cover validation errors, edge cases, and proper error handling when the NYT API fails.
 
 ## To be Enhanced
 
-* CI/CD:
-    It is recommended to integrate CI/CD to run tests automatically on each commit.
+### CI/CD
 
-* User Authentication & Authorization:
-    It would be great to integrate user authentication and authorization to secure the API. This enhancement would:
-        * Ensure only authorized users can trigger the endpoint.
-        * Allow for more granular control over access to different parts of the API.
-        * Include additional request validations based on the authenticated user's permissions.
+It is recommended to integrate CI/CD to run tests automatically on each commit.
+
+### User Authentication & Authorization
+
+It would be great to integrate user authentication and authorization to secure the API. This enhancement would:
+
+* Ensure only authorized users can trigger the endpoint.
+* Allow for more granular control over access to different parts of the API.
+* Include additional request validations based on the authenticated user's permissions.
 
 ## Additional Notes
 
-* Rate Limiting:
-    Rate limiting is applied to protect the API. Check RouteServiceProvider or middleware configurations for details.
+### Rate Limiting
 
-* Caching:
-    API responses are cached for one hour to improve performance and reduce external API calls.
+Rate limiting is applied to protect the API. Check RouteServiceProvider or middleware configurations for details.
 
-* Code Standards:
-    This project follows OOP, SOLID, DRY, KISS, and YAGNI principles, as well as PSR standards. Contributions should adhere to these guidelines.
+### Caching
+
+API responses are cached for one hour to improve performance and reduce external API calls.
+
+### Code Standards
+
+This project follows OOP, SOLID, DRY and KISS principles, as well as PSR standards. Contributions should adhere to these guidelines.
